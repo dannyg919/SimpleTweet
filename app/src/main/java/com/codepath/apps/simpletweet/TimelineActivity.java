@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
 
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApp.getRestClient(this);
 
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         //Find recycler view
         rvTweets = findViewById(R.id.rvTweets);
 
@@ -53,8 +56,25 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
         rvTweets.setAdapter(adapter);
 
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            }
+        });
+
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         populateHomeTimeline();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,8 +83,10 @@ public class TimelineActivity extends AppCompatActivity {
         return true;
     }
 
+    // Menu items logic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if(item.getItemId() == R.id.compose){
             //Compose icon has been tapped
 
@@ -84,6 +106,7 @@ public class TimelineActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Receiving data from composed tweet
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
@@ -100,6 +123,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void populateHomeTimeline() {
+        //Populates Tweets onto the timeline
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
@@ -120,6 +144,36 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void fetchTimelineAsync(int page) {
+        // Send the network request to fetch the updated data
+        // `client` here is an instance of Android Async HTTP
+        // getHomeTimeline is an example endpoint.
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                adapter.clear();
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    adapter.addAll(Tweet.fromJSONArray(jsonArray));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                swipeContainer.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG,"onFailure" +response,throwable);
+            }
+
+        });
+
+
+    }
+
+
 
 
 

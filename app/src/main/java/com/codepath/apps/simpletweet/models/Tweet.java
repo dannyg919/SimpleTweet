@@ -25,6 +25,7 @@ public class Tweet {
     public String body;
     public String createdAt;
     public User user;
+    public String imageContentUrl = null;
 
     public Tweet() {}    //Needed by Parceler
 
@@ -34,6 +35,14 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = tweet.getRelativeTimeAgo(jsonObject.getString("created_at"));
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+
+        if (jsonObject.getJSONObject("entities").has("media")){
+            JSONObject media = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0);
+
+            tweet.imageContentUrl = media.getString("media_url_https");
+
+        }
+
         return tweet;
     }
 

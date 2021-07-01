@@ -1,9 +1,11 @@
 package com.codepath.apps.simpletweet;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
+    public static final int REQUEST_CODE = 25;
+
     Context context;
     List<Tweet> tweets;
     //Pass in context and list of tweets
@@ -74,6 +78,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvBody;
         TextView tvCreatedAt;
         ImageView ivContentImage;
+        Button btnReply;
+        Button btnRetweet;
+        Button btnLike;
 
         public ViewHolder( @NotNull View itemView) {
             super(itemView);
@@ -82,6 +89,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody = itemView.findViewById(R.id.tvBody);
             tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
             ivContentImage = itemView.findViewById(R.id.ivContentImage);
+            btnReply = itemView.findViewById(R.id.btnReply);
+            btnRetweet = itemView.findViewById(R.id.btnRetweet);
+            btnLike = itemView.findViewById(R.id.btnLike);
         }
 
         public void bind(Tweet tweet) {
@@ -113,6 +123,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                         .transform(new RoundedCorners(16))
                         .into(ivContentImage);
             }
+
+            //Buttons logic
+            btnReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("REPLY_KEY",tweet.user.screenName);
+                    context.startActivity(i);
+
+                }
+            });
 
         }
 

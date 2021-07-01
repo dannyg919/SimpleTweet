@@ -37,6 +37,11 @@ public class ComposeActivity extends AppCompatActivity {
         etCompose = findViewById(R.id.etCompose);
         btnTweet = findViewById(R.id.btnTweet);
 
+        String replyHandle = getIntent().getStringExtra("REPLY_KEY");
+        if (replyHandle != null) {
+            etCompose.setText("@" + replyHandle);
+        }
+
         //Set click listener on button
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override

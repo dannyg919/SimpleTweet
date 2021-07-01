@@ -44,6 +44,10 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApp.getRestClient(this);
 
+        //ActionBar formatting
+
+
+
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         //Find recycler view
         rvTweets = findViewById(R.id.rvTweets);
@@ -80,6 +84,8 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if present.
         getMenuInflater().inflate(R.menu.menu_main,menu);
+
+
         return true;
     }
 

@@ -102,6 +102,12 @@ public class TimelineActivity extends AppCompatActivity {
             return true;
         }
 
+        if(item.getItemId() == R.id.profile){
+            //Intent i = new Intent(this, ProfileActivity.class);
+            //startActivity(i);
+            //return true;
+        }
+
         if(item.getItemId() == R.id.logout){
 
             client.clearAccessToken();

@@ -16,8 +16,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.simpletweet.models.Tweet;
+import com.codepath.apps.simpletweet.models.User;
 
 import org.jetbrains.annotations.NotNull;
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -113,6 +115,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     .load(tweet.user.publicImageUrl)
                     .transform(new CircleCrop())
                     .into(ivProfileImage);
+
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, ProfileActivity.class);
+                    i.putExtra(User.class.getSimpleName(), Parcels.wrap(tweet.user));
+                    context.startActivity(i);
+
+                }
+            });
+
 
             //Bind Content pic (if possible)
             if (ivContentImage != null) {
